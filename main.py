@@ -1,6 +1,7 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QPushButton
+from PyQt6.QtWidgets import QApplication, QPushButton, QLabel
 from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtCore import Qt
 
 
 class MainWindow(QMainWindow):
@@ -15,16 +16,14 @@ class MainWindow(QMainWindow):
         self.style_button.move(40, 40)
         self.style_button.setText("Изменить тему")
 
-        self.coords = QLabel(self)
-        self.coords.setText("Координаты: None, None")
-        self.coords.move(30, 30)
+    def Page_Up(self, event):
+        if event.key() == Qt.Key.Key_PageUp:
+            pass
 
-        self.btn = QLabel(self)
-        self.btn.setText("Никакая")
-        self.btn.move(30, 50)
+    def Page_Down(self, event):
+        if event.key() == Qt.Key.Key_PageDown:
+            pass
 
-    def mousePressEvent(self, event):
-        self.coords.setText(f"Координаты:{event.pos().x()}, {event.pos().y()}")
 
 
 
