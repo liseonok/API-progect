@@ -15,6 +15,17 @@ class MainWindow(QMainWindow):
         self.style_button.move(40, 40)
         self.style_button.setText("Изменить тему")
 
+        self.coords = QLabel(self)
+        self.coords.setText("Координаты: None, None")
+        self.coords.move(30, 30)
+
+        self.btn = QLabel(self)
+        self.btn.setText("Никакая")
+        self.btn.move(30, 50)
+
+    def mousePressEvent(self, event):
+        self.coords.setText(f"Координаты:{event.pos().x()}, {event.pos().y()}")
+
 
 
 
