@@ -30,6 +30,7 @@ def get_card_by_coord_and_size(lan, lot, z=15, theme="light"):
 
 lan = input()
 lot = input()
+z = int(input())
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -42,7 +43,7 @@ class MainWindow(QMainWindow):
         self.style_button = QPushButton(self)
         self.style_button.move(40, 40)
         self.style_button.setText("Изменить тему")
-        get_card_by_coord_and_size(lan, lot)
+        get_card_by_coord_and_size(lan, lot, z)
         self.image = QPixmap('map.png')
         self.label = QLabel(self)
         self.label.move(80, 60)
