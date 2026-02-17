@@ -28,6 +28,7 @@ def get_card_by_coord_and_size(lan, lot, z=15, theme="light"):
         print("Http статус:", response.status_code, "(", response.reason, ")")
         return None
 
+
 lan = input()
 lot = input()
 z = int(input())
