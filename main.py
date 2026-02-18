@@ -16,13 +16,6 @@ class MainWindow(QMainWindow):
         self.style_button.move(40, 40)
         self.style_button.setText("Изменить тему")
 
-    def Page_Up(self, event):
-        if event.key() == Qt.Key.Key_PageUp:
-            pass
-
-    def Page_Down(self, event):
-        if event.key() == Qt.Key.Key_PageDown:
-            pass
 
 
 
