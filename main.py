@@ -76,6 +76,7 @@ class MainWindow(QMainWindow):
         # self.style_button.move(40, 40)
         layout.addWidget(self.style_button)
         self.style_button.setText("Изменить тему")
+        self.style_button.clicked.connect(self.change_theme)
         self.pg_up_button = QPushButton(self)
         self.pg_up_button.setText("Увеличить")
         layout.addWidget(self.pg_up_button)
@@ -129,6 +130,16 @@ class MainWindow(QMainWindow):
     def down(self):
         global lot, MASHTAB, THEME
         lot = str(float(lot) - 0.0008)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        self.image = QPixmap('map.png')
+        self.label.setPixmap(self.image)
+
+    def change_theme(self):
+        global MASHTAB, THEME
+        if THEME == "light":
+            THEME = "dark"
+        else:
+            THEME = "light"
         get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
