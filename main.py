@@ -1,7 +1,7 @@
 import sys
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QApplication, QPushButton, QLabel, QVBoxLayout, QWidget, QHBoxLayout
+from PyQt6.QtWidgets import QApplication, QPushButton, QLabel, QVBoxLayout, QWidget, QHBoxLayout, QLineEdit
 from PyQt6.QtWidgets import QMainWindow
 import requests
 
@@ -9,6 +9,26 @@ import requests
 map_file = "map.png"
 MASHTAB = 15
 THEME = "light"
+ADDRESS = ''
+
+
+def get_coord_by_address(address):
+    params = {
+        "apikey": '4ac3ce67-d2de-4ba8-87c8-c5443f4d8776',
+        "geocode": address,
+        "format": "json"}
+    response = requests.get('http://geocode-maps.yandex.ru/1.x/?', params=params)
+    if response:
+        response1 = response.json()
+        toponym = response1["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+        toponym_coodrinates = toponym["Point"]["pos"]
+        lan, lot = toponym_coodrinates.split()
+        return float(lot), float(lan)
+    else:
+        print("Ошибка выполнения запроса:")
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+        return None
+
 
 
 def get_card_by_coord_and_size(lan, lot, z=15, theme="light"):
@@ -53,6 +73,11 @@ class MainWindow(QMainWindow):
         self.label.resize(600, 450)
         self.label.setPixmap(self.image)
 
+        self.adress_input = QLineEdit(self)
+        self.adress_input_button = QPushButton(self)
+        self.adress_input_button.setText('Ввести')
+        self.adress_input_button.clicked.connect(self.import_adress)
+
 
         hlayout = QHBoxLayout()
         self.left_button = QPushButton(self)
@@ -86,7 +111,10 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.pg_down_button)
         self.pg_down_button.clicked.connect(self.pg_down_button_clicked)
 
+        layout.addWidget(self.adress_input)
+        layout.addWidget(self.adress_input_button)
         layout.addLayout(hlayout)
+
 
         layout.addWidget(self.label)
 
@@ -140,6 +168,20 @@ class MainWindow(QMainWindow):
             THEME = "dark"
         else:
             THEME = "light"
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        self.image = QPixmap('map.png')
+        self.label.setPixmap(self.image)
+
+
+    def import_adress(self):
+        global lan, lot, z, MASHTAB, THEME
+        address = self.adress_input.text()
+        if not address:
+            return None
+        lon, lat = get_coord_by_address(address)
+        if not lat or not lon:
+            return None
+        lan, lot = lat, lon
         get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
