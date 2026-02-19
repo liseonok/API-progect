@@ -39,6 +39,7 @@ def get_card_by_coord_and_size(lan, lot, z=15, theme="light"):
         "ll": f'{lan},{lot}',
         "z": z,
         "theme": theme,
+        "pt": f'{lan},{lot},pm2pnl'
     }
     response = requests.get(url, params=params)
     if response:
@@ -51,9 +52,9 @@ def get_card_by_coord_and_size(lan, lot, z=15, theme="light"):
         return None
 
 
-lan = input()
-lot = input()
-z = int(input())
+lan = '37.621202'
+lot = '55.753544'
+z = 15
 
 class MainWindow(QMainWindow):
     def __init__(self):
