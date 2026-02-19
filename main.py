@@ -46,8 +46,6 @@ def get_coord_by_address(address):
 def get_card_by_coord_and_size(lan, lot, z=15, theme="light", lanpt1=lanpt, lotpt1=lotpt):
     api_key = "f3a0fe3a-b07e-4840-a1da-06f18b2ddf13"
     url = "https://static-maps.yandex.ru/v1?"
-    print(lanpt1, lotpt1)
-    print(lan, lot)
     if point_needed:
         params = {
             "apikey": api_key,
