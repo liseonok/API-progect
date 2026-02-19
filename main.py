@@ -15,6 +15,13 @@ lot = '55.753544'
 z = 15
 lanpt = lan
 lotpt = lot
+point_needed = True
+
+
+def update_pt(lan, lot):
+    global lanpt, lotpt
+    lanpt = lan
+    lotpt = lot
 
 
 def get_coord_by_address(address):
@@ -36,16 +43,26 @@ def get_coord_by_address(address):
 
 
 
-def get_card_by_coord_and_size(lan, lot, z=15, theme="light", lanpt=lanpt, lotpt=lotpt):
+def get_card_by_coord_and_size(lan, lot, z=15, theme="light", lanpt1=lanpt, lotpt1=lotpt):
     api_key = "f3a0fe3a-b07e-4840-a1da-06f18b2ddf13"
     url = "https://static-maps.yandex.ru/v1?"
-    params = {
-        "apikey": api_key,
-        "ll": f'{lan},{lot}',
-        "z": z,
-        "theme": theme,
-        "pt": f'{lanpt},{lotpt},pm2pnl'
-    }
+    print(lanpt1, lotpt1)
+    print(lan, lot)
+    if point_needed:
+        params = {
+            "apikey": api_key,
+            "ll": f'{lan},{lot}',
+            "z": z,
+            "theme": theme,
+            "pt": f'{lanpt1},{lotpt1},pm2pnl'
+        }
+    else:
+        params = {
+            "apikey": api_key,
+            "ll": f'{lan},{lot}',
+            "z": z,
+            "theme": theme,
+        }
     response = requests.get(url, params=params)
     if response:
         with open(map_file, "wb") as file:
@@ -84,6 +101,9 @@ class MainWindow(QMainWindow):
         self.adress_input_button.setText('Ввести')
         self.adress_input_button.clicked.connect(self.import_adress)
 
+        self.cancel_button = QPushButton(self)
+        self.cancel_button.setText("Отменить")
+        self.cancel_button.clicked.connect(self.cancel)
 
         hlayout = QHBoxLayout()
         self.left_button = QPushButton(self)
@@ -119,16 +139,24 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.adress_input)
         layout.addWidget(self.adress_input_button)
+        layout.addWidget(self.cancel_button)
         layout.addLayout(hlayout)
 
 
         layout.addWidget(self.label)
 
+    def cancel(self):
+        global point_needed
+        point_needed = False
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
+        self.image = QPixmap('map.png')
+        self.label.setPixmap(self.image)
+
     def pg_up_button_clicked(self):
         global MASHTAB, THEME
         if MASHTAB < 21:
             MASHTAB += 1
-        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
 
@@ -136,35 +164,35 @@ class MainWindow(QMainWindow):
         global MASHTAB, THEME
         if MASHTAB > 1:
             MASHTAB -= 1
-        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
 
     def right(self):
         global lan, MASHTAB, THEME
         lan = str(float(lan) + 0.0008)
-        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
 
     def left(self):
         global lan, MASHTAB, THEME
         lan = str(float(lan) - 0.0008)
-        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
 
     def up(self):
         global lot, MASHTAB, THEME
         lot = str(float(lot) + 0.0008)
-        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
 
     def down(self):
         global lot, MASHTAB, THEME
         lot = str(float(lot) - 0.0008)
-        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
 
@@ -174,13 +202,12 @@ class MainWindow(QMainWindow):
             THEME = "dark"
         else:
             THEME = "light"
-        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME)
+        get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
 
-
     def import_adress(self):
-        global lan, lot, z, MASHTAB, THEME
+        global lan, lot, z, MASHTAB, THEME, point_needed, lanpt, lotpt
         address = self.adress_input.text()
         if not address:
             return None
@@ -188,11 +215,12 @@ class MainWindow(QMainWindow):
         if not lat or not lon:
             return None
         lan, lot = lat, lon
-        lanpt = lan
-        lotpt = lot
+        update_pt(lan, lot)
+        point_needed = True
         get_card_by_coord_and_size(lan, lot, MASHTAB, THEME, lanpt, lotpt)
         self.image = QPixmap('map.png')
         self.label.setPixmap(self.image)
+
 
 
 if __name__ == '__main__':
